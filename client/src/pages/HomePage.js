@@ -12,13 +12,16 @@ const HomePage = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  //get function
   const getBloodRecords = async () => {
+    if (!user?._id) return;
+
     try {
-      const { data } = await API.get("/inventory/get-inventory");
+      const { data } = await API.post("/inventory/get-inventory", {
+        userId: user._id,
+      });
+
       if (data?.success) {
-        setData(data?.inventory);
-        // console.log(data);
+        setData(data.inventory || []);
       }
     } catch (error) {
       console.log(error);
@@ -26,11 +29,17 @@ const HomePage = () => {
   };
 
   useEffect(() => {
+    if (user?.role === "admin") {
+      navigate("/admin");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     getBloodRecords();
-  }, []);
+  }, [user?._id]);
+
   return (
     <Layout>
-      {user?.role === "admin" && navigate("/admin")}
       {error && <span>{alert(error)}</span>}
       {loading ? (
         <Spinner />
@@ -46,28 +55,37 @@ const HomePage = () => {
               <i className="fa-solid fa-plus text-success py-4"></i>
               Add Inventory
             </h4>
-            <table className="table ">
+
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col">Blood Group</th>
                   <th scope="col">Inventory Type</th>
                   <th scope="col">Quantity</th>
                   <th scope="col">Donar Email</th>
-                  <th scope="col">TIme & Date</th>
+                  <th scope="col">Time & Date</th>
                 </tr>
               </thead>
               <tbody>
-                {data?.map((record) => (
-                  <tr key={record._id}>
-                    <td>{record.bloodGroup}</td>
-                    <td>{record.inventoryType}</td>
-                    <td>{record.quantity} (ML)</td>
-                    <td>{record.email}</td>
-                    <td>
-                      {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
+                {data.length > 0 ? (
+                  data.map((record) => (
+                    <tr key={record._id}>
+                      <td>{record.bloodGroup}</td>
+                      <td>{record.inventoryType}</td>
+                      <td>{record.quantity} (ML)</td>
+                      <td>{record.email}</td>
+                      <td>
+                        {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      No records found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
 

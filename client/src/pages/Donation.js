@@ -7,15 +7,17 @@ import { useSelector } from "react-redux";
 const Donation = () => {
   const { user } = useSelector((state) => state.auth);
   const [data, setData] = useState([]);
-  //find donar records
+
   const getDonars = async () => {
+    if (!user?._id) return;
+
     try {
       const { data } = await API.post("/inventory/get-inventory", {
-        userId: user?._id,
+        userId: user._id,
       });
+
       if (data?.success) {
-        setData(data?.inventory);
-        console.log(data);
+        setData(data.inventory || []);
       }
     } catch (error) {
       console.log(error);
@@ -24,12 +26,12 @@ const Donation = () => {
 
   useEffect(() => {
     getDonars();
-  }, [user]);
+  }, [user?._id]);
 
   return (
     <Layout>
       <div className="container mt-4">
-        <h2>Add Inventory</h2>
+        <h2>Donation Records</h2>
         <table className="table">
           <thead>
             <tr>
@@ -42,7 +44,7 @@ const Donation = () => {
           </thead>
           <tbody>
             {data?.length > 0 ? (
-              data?.map((record) => (
+              data.map((record) => (
                 <tr key={record._id}>
                   <td>{record.bloodGroup}</td>
                   <td>{record.inventoryType}</td>
@@ -53,7 +55,9 @@ const Donation = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">No records found</td>
+                <td colSpan="5" className="text-center">
+                  No records found
+                </td>
               </tr>
             )}
           </tbody>

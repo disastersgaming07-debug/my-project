@@ -13,36 +13,14 @@ const {
 
 const router = express.Router();
 
-//routes
-// ADD INVENTORY || POST
+// routes
 router.post("/create-inventory", authMiddleware, createInventoryController);
-
-//GET ALL BLOOD RECORDS - CHANGED FROM GET TO POST
 router.post("/get-inventory", authMiddleware, getInventoryController);
-//GET RECENT BLOOD RECORDS
-router.post(
-  "/get-recent-inventory",
-  authMiddleware,
-  getRecentInventoryController,
-);
-
-//GET HOSPITAL BLOOD RECORDS
-router.post(
-  "/get-inventory-hospital",
-  authMiddleware,
-  getInventoryHospitalController,
-);
-
-//GET DONOR RECORDS
+router.post("/get-recent-inventory", authMiddleware, getRecentInventoryController);
+router.post("/get-inventory-hospital", authMiddleware, getInventoryHospitalController);
 router.get("/get-donars", authMiddleware, getDonarsController);
-
-//GET HOSPITAL RECORDS
 router.get("/get-hospitals", authMiddleware, getHospitalController);
-
-//GET ORGANISATION RECORDS
 router.get("/get-organisation", authMiddleware, getOrganisationController);
-
-//GET ORGANISATION FOR HOSPITAL RECORDS
 router.get(
   "/get-organisation-for-hospital",
   authMiddleware,
