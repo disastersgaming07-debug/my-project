@@ -17,10 +17,10 @@ const router = express.Router();
 // ADD INVENTORY || POST
 router.post("/create-inventory", authMiddleware, createInventoryController);
 
-//GET ALL BLOOD RECORDS
-router.get("/get-inventory", authMiddleware, getInventoryController);
+//GET ALL BLOOD RECORDS - CHANGED FROM GET TO POST
+router.post("/get-inventory", authMiddleware, getInventoryController);
 //GET RECENT BLOOD RECORDS
-router.get(
+router.post(
   "/get-recent-inventory",
   authMiddleware,
   getRecentInventoryController,
