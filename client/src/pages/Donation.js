@@ -10,11 +10,8 @@ const Donation = () => {
   //find donar records
   const getDonars = async () => {
     try {
-      const { data } = await API.post("/inventory/get-inventory-hospital", {
-        filters: {
-          inventoryType: "in",
-          donar: user?._id,
-        },
+      const { data } = await API.post("/inventory/get-inventory", {
+        userId: user?._id,
       });
       if (data?.success) {
         setData(data?.inventory);
@@ -27,31 +24,38 @@ const Donation = () => {
 
   useEffect(() => {
     getDonars();
-  }, []);
+  }, [user]);
 
   return (
     <Layout>
       <div className="container mt-4">
+        <h2>Add Inventory</h2>
         <table className="table">
           <thead>
             <tr>
               <th scope="col">Blood Group</th>
-              <th scope="col">Inventory TYpe</th>
+              <th scope="col">Inventory Type</th>
               <th scope="col">Quantity</th>
               <th scope="col">Email</th>
               <th scope="col">Date</th>
             </tr>
           </thead>
           <tbody>
-            {data?.map((record) => (
-              <tr key={record._id}>
-                <td>{record.bloodGroup}</td>
-                <td>{record.inventoryType}</td>
-                <td>{record.quantity}</td>
-                <td>{record.email}</td>
-                <td>{moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}</td>
+            {data?.length > 0 ? (
+              data?.map((record) => (
+                <tr key={record._id}>
+                  <td>{record.bloodGroup}</td>
+                  <td>{record.inventoryType}</td>
+                  <td>{record.quantity}</td>
+                  <td>{record.email}</td>
+                  <td>{moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">No records found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
